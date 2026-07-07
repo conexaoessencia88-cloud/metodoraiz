@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa de Vazamentos · Método RAIZ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   RAIZ DESIGN SYSTEM v1.0
+   Reutilizável em todas as ferramentas do ecossistema
+   ═══════════════════════════════════════════════ */
+:root {
+  /* Paleta oficial */
+  --r-verde:   #2F3D2E;
+  --r-verde-m: #3D5C36;
+  --r-verde-l: #A8BC9E;
+  --r-verde-xl:#EDF3E8;
+  --r-terra:   #8B4E2E;
+  --r-terra-l: #C4713F;
+  --r-ouro:    #C9A96E;
+  --r-ouro-l:  #E8D5A3;
+  --r-areia:   #F3F1EC;
+  --r-areia-d: #E8E4DC;
+  --r-branco:  #FAFAF8;
+  --r-tx:      #1A1A18;
+  --r-tx-s:    #5A5A52;
+  --r-borda:   #D9D5CC;
+
+  /* Tipografia */
+  --r-serif: 'Cormorant Garamond', Georgia, serif;
+  --r-sans:  'DM Sans', system-ui, sans-serif;
+}
+
+/* Reset */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--r-sans); background: var(--r-areia); color: var(--r-tx); font-size:14px; line-height:1.6; }
+
+/* ── COMPONENTES REUTILIZÁVEIS ─────────────────────── */
+
+/* Eyebrow label */
+.r-eyebrow { font-size:9px; font-weight:500; letter-spacing:.22em; text-transform:uppercase; color:var(--r-verde-l); }
+
+/* Título serif grande */
+.r-titulo-hero { font-family:var(--r-serif); font-size:clamp(36px,7vw,56px); font-weight:300; line-height:1.05; }
+.r-titulo-hero em { font-style:italic; color:var(--r-ouro); }
+
+/* Seção header */
+.r-secao-header { display:flex; align-items:baseline; gap:12px; padding-bottom:10px; border-bottom:1px solid var(--r-borda); margin-bottom:20px; }
+.r-secao-tag { font-size:8px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--r-ouro); }
+.r-secao-titulo { font-family:var(--r-serif); font-size:24px; font-weight:400; color:var(--r-verde); }
+
+/* Card base */
+.r-card { background:var(--r-branco); border:1px solid var(--r-borda); border-radius:2px; }
+
+/* Botão primário */
+.r-btn-primary { background:var(--r-verde); color:var(--r-areia); border:none; padding:14px 44px; font-family:var(--r-sans); font-size:11px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; cursor:pointer; border-radius:1px; transition:background .2s; }
+.r-btn-primary:hover { background:var(--r-verde-m); }
+.r-btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+
+/* Botão secundário */
+.r-btn-sec { background:transparent; border:1px solid var(--r-ouro); color:var(--r-ouro); font-family:var(--r-serif); font-size:17px; font-style:italic; padding:13px 44px; cursor:pointer; border-radius:1px; transition:all .25s; }
+.r-btn-sec:hover { background:var(--r-ouro); color:var(--r-verde); }
+
+/* Input base */
+.r-input { width:100%; background:transparent; border:none; border-bottom:1px solid rgba(168,188,158,.4); font-family:var(--r-serif); font-size:22px; color:var(--r-areia); padding:8px 0; outline:none; text-align:center; transition:border-color .2s; }
+.r-input:focus { border-bottom-color:var(--r-ouro); }
+.r-input::placeholder { color:rgba(243,241,236,.3); font-style:italic; }
+
+.r-input-light { width:100%; background:var(--r-branco); border:1px solid var(--r-borda); border-radius:2px; font-family:var(--r-sans); font-size:13px; color:var(--r-tx); padding:11px 14px; outline:none; transition:border-color .2s; }
+.r-input-light:focus { border-color:var(--r-ouro); }
+.r-input-light::placeholder { color:var(--r-verde-l); opacity:.7; }
+
+/* Separador */
+.r-sep { height:1px; background:var(--r-areia-d); margin:32px 0; }
+
+/* Linha dourada */
+.r-linha-ouro { width:1px; height:44px; background:linear-gradient(to bottom,transparent,var(--r-ouro),transparent); margin:0 auto 28px; }
+
+/* Container */
+.r-ctn { max-width:880px; margin:0 auto; padding:0 28px 60px; }
+
+/* Citação */
+.r-citacao { background:var(--r-verde); border-radius:2px; padding:22px 28px; }
+.r-citacao-label { font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--r-verde-l); margin-bottom:8px; }
+.r-citacao-txt { font-family:var(--r-serif); font-size:17px; font-style:italic; color:var(--r-areia); line-height:1.65; }
+
+/* Rodapé */
+.r-rodape { margin-top:16px; padding-top:10px; border-top:1px solid var(--r-borda); display:flex; justify-content:space-between; font-size:9px; color:rgba(90,90,82,.4); letter-spacing:.08em; text-transform:uppercase; }
+
+/* Barra de progresso */
+.r-prog-bar-wrap { height:2px; background:rgba(168,188,158,.2); }
+.r-prog-bar-fill { height:2px; background:var(--r-ouro); transition:width .4s ease; }
+
+/* ── ESTILOS ESPECÍFICOS F01 ───────────────────────── */
+
+/* TELA BOAS-VINDAS */
+#tela-bv { min-height:100vh; background:var(--r-verde); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 40px; text-align:center; position:relative; overflow:hidden; }
+#tela-bv::before { content:''; position:absolute; width:500px; height:500px; border-radius:50%; border:1px solid rgba(201,169,110,.07); top:-200px; right:-200px; pointer-events:none; }
+#tela-bv::after { content:''; position:absolute; width:300px; height:300px; border-radius:50%; border:1px solid rgba(168,188,158,.08); bottom:-80px; left:-80px; pointer-events:none; }
+.bv-intro { font-family:var(--r-serif); font-size:15px; font-style:italic; color:rgba(243,241,236,.6); max-width:460px; line-height:1.7; margin-bottom:36px; }
+
+/* REGISTRO RAIZ */
+#tela-registro { display:none; min-height:100vh; background:var(--r-verde); display:none; flex-direction:column; align-items:center; justify-content:center; padding:60px 40px; }
+.reg-wrap { max-width:420px; width:100%; }
+.reg-intro { font-size:12px; color:rgba(168,188,158,.7); line-height:1.7; margin-bottom:28px; text-align:center; font-style:italic; }
+.reg-campo { margin-bottom:20px; }
+.reg-label { font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:var(--r-verde-l); margin-bottom:8px; display:block; }
+.reg-confirmacao { background:rgba(168,188,158,.1); border:1px solid rgba(168,188,158,.25); border-radius:2px; padding:14px 18px; margin-top:20px; font-size:12px; color:var(--r-verde-l); line-height:1.65; text-align:center; display:none; }
+.reg-origem { display:flex; gap:8px; flex-wrap:wrap; }
+.reg-origem-btn { background:transparent; border:1px solid rgba(168,188,158,.25); color:rgba(168,188,158,.7); font-family:var(--r-sans); font-size:11px; padding:7px 14px; cursor:pointer; border-radius:1px; transition:all .15s; }
+.reg-origem-btn.sel { background:rgba(168,188,158,.15); border-color:var(--r-verde-l); color:var(--r-verde-l); }
+
+/* HEADER FIXO DIAGNÓSTICO */
+#tela-diag { display:none; }
+.diag-header { background:var(--r-verde); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+.diag-header-info { display:flex; flex-direction:column; gap:2px; }
+.diag-header-marca { font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--r-verde-l); }
+.diag-header-nome { font-family:var(--r-serif); font-size:14px; font-style:italic; color:var(--r-ouro); }
+.diag-header-prog { font-size:9px; color:var(--r-verde-l); letter-spacing:.1em; text-transform:uppercase; }
+
+/* Hero diagnóstico */
+.diag-hero { background:var(--r-verde); padding:40px 32px 32px; }
+.diag-instrucao { background:var(--r-branco); border-left:3px solid var(--r-ouro); padding:13px 18px; margin:18px 28px 0; font-size:12px; color:var(--r-tx-s); line-height:1.7; max-width:880px; margin-left:auto; margin-right:auto; }
+
+/* AFIRMAÇÕES */
+.dim-secao { margin-top:40px; }
+.dim-desc { font-size:12px; color:var(--r-tx-s); margin-bottom:20px; max-width:560px; line-height:1.65; }
+.afirm-lista { display:flex; flex-direction:column; gap:14px; }
+.afirm-item { background:var(--r-branco); border:1px solid var(--r-borda); border-radius:2px; padding:16px 18px; }
+.afirm-id { font-size:8px; font-family:monospace; color:var(--r-ouro); letter-spacing:.1em; margin-bottom:7px; }
+.afirm-txt { font-family:var(--r-serif); font-size:17px; font-style:italic; color:var(--r-verde); line-height:1.5; margin-bottom:13px; }
+.escala-wrap { display:flex; gap:5px; }
+.escala-op { flex:1; text-align:center; cursor:pointer; }
+.escala-btn { width:100%; padding:9px 2px; border:1px solid var(--r-borda); background:var(--r-areia); border-radius:2px; font-family:var(--r-serif); font-size:18px; font-weight:600; color:var(--r-tx-s); cursor:pointer; transition:all .15s; }
+.escala-btn:hover { border-color:var(--r-verde-l); color:var(--r-verde); }
+.escala-btn.sel { background:var(--r-verde); color:var(--r-areia); border-color:var(--r-verde); }
+.escala-ancora { display:flex; justify-content:space-between; margin-top:4px; font-size:9px; color:var(--r-tx-s); }
+
+/* RESULTADO */
+#tela-resultado { display:none; }
+.res-hero { background:var(--r-verde); padding:52px 40px 44px; text-align:center; position:relative; overflow:hidden; }
+.res-hero::before { content:''; position:absolute; width:400px; height:400px; border-radius:50%; border:1px solid rgba(201,169,110,.08); top:-150px; left:50%; transform:translateX(-50%); }
+.igv-num { font-family:var(--r-serif); font-size:88px; font-weight:300; color:var(--r-ouro); line-height:1; }
+.igv-label { font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--r-verde-l); margin-top:4px; }
+.igv-barra-wrap { width:260px; height:4px; background:rgba(168,188,158,.2); border-radius:2px; overflow:hidden; margin:10px auto; }
+.igv-barra-fill { height:100%; background:var(--r-ouro); border-radius:2px; transition:width 1.2s ease; }
+.fase-card { display:inline-block; background:rgba(201,169,110,.12); border:1px solid rgba(201,169,110,.3); border-radius:2px; padding:9px 22px; margin:14px 0; }
+.fase-label { font-size:8px; letter-spacing:.16em; text-transform:uppercase; color:var(--r-verde-l); display:block; margin-bottom:3px; }
+.fase-nome { font-family:var(--r-serif); font-size:21px; color:var(--r-ouro); }
+.igv-interp { font-family:var(--r-serif); font-size:17px; font-style:italic; color:rgba(243,241,236,.72); max-width:500px; margin:0 auto; line-height:1.65; }
+
+/* Dimensões resultado */
+.dim-res-card { background:var(--r-branco); border:1px solid var(--r-borda); border-radius:2px; overflow:hidden; margin-bottom:14px; }
+.dim-res-top { padding:18px 22px 14px; display:flex; align-items:flex-start; gap:18px; }
+.dim-res-score { font-family:var(--r-serif); font-size:48px; font-weight:300; line-height:1; flex-shrink:0; }
+.dim-res-info { flex:1; }
+.dim-res-nivel { font-size:8px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; margin-bottom:5px; }
+.dim-res-barra { height:3px; background:var(--r-areia-d); border-radius:2px; overflow:hidden; margin-bottom:10px; }
+.dim-res-barra-fill { height:100%; border-radius:2px; transition:width 1s ease; }
+.dim-res-interp { font-size:12px; color:var(--r-tx-s); line-height:1.65; }
+.dim-res-blocos { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--r-areia-d); }
+.dim-res-bloco { padding:14px 18px; }
+.dim-res-bloco:first-child { border-right:1px solid var(--r-areia-d); }
+.dim-bloco-label { font-size:8px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--r-tx-s); margin-bottom:6px; }
+.dim-bloco-txt { font-size:11.5px; color:var(--r-tx); line-height:1.6; }
+
+/* PRIORIDADE RAIZ */
+.prioridade-raiz { border:1px solid var(--r-borda); border-radius:2px; overflow:hidden; }
+.pr-header { background:var(--r-verde); padding:16px 22px; }
+.pr-header-label { font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--r-verde-l); margin-bottom:4px; }
+.pr-header-titulo { font-family:var(--r-serif); font-size:22px; color:var(--r-areia); }
+.pr-corpo { padding:20px 22px; background:var(--r-branco); }
+.pr-dim-nome { font-family:var(--r-serif); font-size:20px; color:var(--r-verde); font-weight:600; margin-bottom:10px; }
+.pr-blocos { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.pr-bloco { background:var(--r-areia); border-radius:2px; padding:13px 15px; }
+.pr-bloco-label { font-size:8px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--r-tx-s); margin-bottom:6px; }
+.pr-bloco-txt { font-size:12px; color:var(--r-tx); line-height:1.6; }
+.pr-acao { background:var(--r-verde-xl); border-left:3px solid var(--r-verde-m); padding:12px 16px; margin-top:14px; font-size:12px; color:var(--r-verde); line-height:1.65; }
+.pr-jornada { background:var(--r-areia-d); padding:10px 16px; margin-top:10px; font-size:11.5px; color:var(--r-tx-s); line-height:1.6; font-style:italic; border-radius:2px; }
+
+/* PRIMEIRO PASSO */
+.primeiro-passo { background:var(--r-branco); border:1px solid var(--r-borda); border-radius:2px; padding:20px 22px; }
+.pp-numero { font-family:var(--r-serif); font-size:56px; font-weight:300; color:var(--r-ouro); line-height:1; float:right; margin-left:16px; }
+.pp-label { font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:var(--r-ouro); margin-bottom:6px; }
+.pp-titulo { font-family:var(--r-serif); font-size:19px; color:var(--r-verde); margin-bottom:10px; }
+.pp-txt { font-size:13px; color:var(--r-tx-s); line-height:1.7; }
+.pp-prazo { display:inline-block; margin-top:10px; font-size:9px; letter-spacing:.1em; text-transform:uppercase; background:var(--r-verde-xl); color:var(--r-verde-m); padding:4px 12px; border-radius:1px; }
+
+/* DECISÃO SUSTENTADA */
+.decisao-sustentada { background:var(--r-verde); border-radius:2px; padding:28px 28px; }
+.ds-label { font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--r-verde-l); margin-bottom:12px; }
+.ds-pergunta { font-family:var(--r-serif); font-size:22px; font-style:italic; color:var(--r-areia); line-height:1.5; margin-bottom:18px; max-width:500px; }
+.ds-textarea { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(168,188,158,.25); border-radius:2px; font-family:var(--r-serif); font-size:16px; color:var(--r-areia); padding:14px 16px; outline:none; resize:vertical; min-height:80px; line-height:1.6; transition:border-color .2s; }
+.ds-textarea:focus { border-color:var(--r-ouro); }
+.ds-textarea::placeholder { color:rgba(168,188,158,.4); font-style:italic; }
+.ds-nota { font-size:10px; color:rgba(168,188,158,.45); margin-top:8px; line-height:1.55; }
+
+/* EVOLUÇÃO */
+.evolucao-card { background:var(--r-branco); border:1px solid var(--r-borda); border-radius:2px; padding:22px 24px; }
+.ev-titulo { font-family:var(--r-serif); font-size:20px; color:var(--r-verde); font-weight:400; margin-bottom:8px; }
+.ev-txt { font-size:12.5px; color:var(--r-tx-s); line-height:1.75; }
+
+/* PLANO RAIZ */
+.plano-raiz { background:var(--r-verde); border-radius:2px; padding:26px 28px; }
+.plano-label { font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--r-verde-l); margin-bottom:10px; }
+.plano-pergunta { font-family:var(--r-serif); font-size:20px; font-style:italic; color:var(--r-areia); line-height:1.55; margin-bottom:18px; max-width:500px; }
+.plano-input-wrap { display:flex; gap:10px; flex-wrap:wrap; }
+.plano-confirmacao { display:none; background:rgba(168,188,158,.12); border:1px solid rgba(168,188,158,.25); border-radius:2px; padding:13px 16px; margin-top:12px; font-size:12px; color:var(--r-verde-l); line-height:1.6; }
+.plano-sub { font-size:10px; color:rgba(168,188,158,.4); margin-top:10px; line-height:1.6; }
+
+/* ENCERRAMENTO */
+.encerramento { background:var(--r-areia-d); border-radius:2px; padding:28px 28px; text-align:center; }
+.enc-titulo { font-family:var(--r-serif); font-size:22px; color:var(--r-verde); font-weight:300; margin-bottom:14px; }
+.enc-txt { font-family:var(--r-serif); font-size:16px; font-style:italic; color:var(--r-tx-s); line-height:1.75; max-width:520px; margin:0 auto; }
+.enc-assin { font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--r-verde-l); margin-top:16px; }
+
+/* STATUS ENVIO */
+.status-envio { font-size:10px; color:var(--r-verde-l); text-align:center; margin-top:8px; min-height:16px; font-style:italic; }
+
+/* PDF */
+.btn-pdf-wrap { text-align:center; margin-top:28px; }
+.btn-pdf { background:var(--r-terra); color:#fff; border:none; padding:13px 38px; font-family:var(--r-sans); font-size:11px; letter-spacing:.16em; text-transform:uppercase; cursor:pointer; border-radius:1px; transition:background .2s; }
+.btn-pdf:hover { background:var(--r-terra-l); }
+
+@media (max-width:600px) {
+  .dim-res-blocos, .pr-blocos { grid-template-columns:1fr; }
+  .dim-res-bloco:first-child { border-right:none; border-bottom:1px solid var(--r-areia-d); }
+  .dim-res-top { flex-direction:column; }
+  .plano-input-wrap { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     TELA 1 — BOAS-VINDAS
+     ════════════════════════════════════════════ -->
+<div id="tela-bv">
+  <div class="r-eyebrow" style="margin-bottom:28px">FERRAMENTA 01 · VERSÃO 3.0 · MÉTODO RAIZ · CONEXÃO ESSÊNCIA</div>
+  <div class="r-titulo-hero" style="color:var(--r-areia);text-align:center;margin-bottom:12px">
+    Mapa de <em>Vazamentos</em>
+  </div>
+  <div class="r-eyebrow" style="color:var(--r-ouro);margin-bottom:28px">COMPETÊNCIA: CONSCIÊNCIA EMPRESARIAL</div>
+  <div class="r-linha-ouro"></div>
+  <div class="bv-intro">
+    Este diagnóstico é uma fotografia do seu momento atual.<br>
+    Não é uma sentença. Não é uma avaliação.<br>
+    É o ponto de partida da sua Jornada RAIZ.
+  </div>
+  <button class="r-btn-sec" onclick="irParaRegistro()">Começar minha jornada →</button>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TELA 2 — REGISTRO RAIZ
+     ════════════════════════════════════════════ -->
+<div id="tela-registro">
+  <div class="reg-wrap">
+    <div class="r-eyebrow" style="color:var(--r-verde-l);margin-bottom:14px;text-align:center">Registro RAIZ</div>
+    <div class="r-titulo-hero" style="color:var(--r-areia);text-align:center;font-size:clamp(26px,5vw,36px);margin-bottom:8px">
+      Antes de começar,<br>vamos criar o seu <em>registro</em>
+    </div>
+    <div class="reg-intro">
+      Seu Registro RAIZ permitirá acompanhar sua evolução ao longo do tempo, em todas as ferramentas da jornada.
+    </div>
+
+    <div class="reg-campo">
+      <label class="reg-label">Seu nome</label>
+      <input type="text" class="r-input" id="reg-nome" placeholder="Como gostaria de ser chamada?">
+    </div>
+    <div class="reg-campo" style="margin-top:20px">
+      <label class="reg-label">E-mail</label>
+      <input type="email" class="r-input" id="reg-email" placeholder="seu@email.com">
+    </div>
+    <div class="reg-campo" style="margin-top:20px">
+      <label class="reg-label">WhatsApp <span style="font-size:9px;opacity:.5">(opcional)</span></label>
+      <input type="text" class="r-input" id="reg-whatsapp" placeholder="(00) 00000-0000">
+    </div>
+    <div class="reg-campo" style="margin-top:20px">
+      <label class="reg-label">Como você chegou até aqui?</label>
+      <div class="reg-origem" id="reg-origem">
+        <button class="reg-origem-btn" onclick="selOrigem(this,'Instagram')">Instagram</button>
+        <button class="reg-origem-btn" onclick="selOrigem(this,'Site')">Site</button>
+        <button class="reg-origem-btn" onclick="selOrigem(this,'Workshop')">Workshop</button>
+        <button class="reg-origem-btn" onclick="selOrigem(this,'Indicação')">Indicação</button>
+        <button class="reg-origem-btn" onclick="selOrigem(this,'Mentoria RAIZ')">Mentoria RAIZ</button>
+        <button class="reg-origem-btn" onclick="selOrigem(this,'Outro')">Outro</button>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:28px">
+      <button class="r-btn-sec" onclick="criarRegistro()">Criar meu Registro RAIZ →</button>
+    </div>
+    <div class="reg-confirmacao" id="reg-confirmacao"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TELA 3 — DIAGNÓSTICO
+     ════════════════════════════════════════════ -->
+<div id="tela-diag">
+  <div class="diag-header">
+    <div class="diag-header-info">
+      <span class="diag-header-marca">Método RAIZ · Mapa de Vazamentos v3.0</span>
+      <span class="diag-header-nome" id="dh-nome"></span>
+    </div>
+    <span class="diag-header-prog" id="dh-prog">Dimensão 1 de 6</span>
+  </div>
+  <div class="r-prog-bar-wrap"><div class="r-prog-bar-fill" id="prog-bar" style="width:0%"></div></div>
+
+  <div class="diag-hero">
+    <div class="r-eyebrow" style="margin-bottom:10px">Ferramenta 01 · Diagnóstico · Versão 3.0</div>
+    <div class="r-titulo-hero" style="color:var(--r-areia);font-size:clamp(26px,5vw,38px);margin-bottom:8px">
+      Mapa de <em>Vazamentos</em>
+    </div>
+    <div style="font-size:13px;color:rgba(243,241,236,.6);max-width:480px;line-height:1.65">
+      Leia cada afirmação e indique o quanto ela descreve sua realidade atual. Não existe resposta certa, existe apenas a realidade de agora.
+    </div>
+  </div>
+
+  <div style="max-width:880px;margin:0 auto;padding:0 28px">
+    <div class="diag-instrucao">
+      <strong>Como responder:</strong> Para cada afirmação, selecione um número de 0 a 4, onde <strong>0 = nunca acontece</strong> e <strong>4 = acontece sempre</strong>. Responda com base no que é real hoje.
+    </div>
+  </div>
+
+  <div class="r-ctn" id="dim-container"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TELA 4 — RESULTADO
+     ════════════════════════════════════════════ -->
+<div id="tela-resultado">
+
+  <!-- HERO IGV -->
+  <div class="res-hero">
+    <div class="r-eyebrow" style="margin-bottom:14px">Diagnóstico · Método RAIZ · F01 v3.0</div>
+    <div class="r-titulo-hero" style="color:var(--r-areia);margin-bottom:8px">
+      Seu <em>Mapa de Vazamentos</em>
+    </div>
+    <div style="font-size:13px;font-style:italic;color:rgba(243,241,236,.5);margin-bottom:28px" id="res-nome-data"></div>
+    <div class="igv-num" id="igv-num">-</div>
+    <div class="igv-label">Índice Geral de Vazamentos</div>
+    <div class="igv-barra-wrap"><div class="igv-barra-fill" id="igv-barra" style="width:0%"></div></div>
+    <div class="fase-card">
+      <span class="fase-label">Momento atual na Jornada RAIZ</span>
+      <div class="fase-nome" id="fase-nome">-</div>
+    </div>
+    <div class="igv-interp" id="igv-interp"></div>
+  </div>
+
+  <div class="r-ctn">
+
+    <!-- ETAPA 1: ACOLHIMENTO -->
+    <div style="margin-top:36px">
+      <div class="r-secao-header">
+        <span class="r-secao-tag">Etapa 01</span>
+        <span class="r-secao-titulo">Acolhimento</span>
+      </div>
+      <div class="r-card" style="padding:20px 24px" id="acolhimento-txt"></div>
+    </div>
+
+    <!-- ETAPA 2: INTERPRETAÇÃO -->
+    <div style="margin-top:32px">
+      <div class="r-secao-header">
+        <span class="r-secao-tag">Etapa 02</span>
+        <span class="r-secao-titulo">Leitura do seu Padrão</span>
+      </div>
+      <div id="dims-resultado"></div>
+    </div>
+
+    <!-- ETAPA 3: PRIORIDADE RAIZ -->
+    <div style="margin-top:32px">
+      <div class="r-secao-header">
+        <span class="r-secao-tag">Etapa 03 · Conceito Proprietário</span>
+        <span class="r-secao-titulo">Sua Prioridade RAIZ</span>
+      </div>
+      <div id="prioridade-raiz-wrap"></div>
+    </div>
+
+    <!-- ETAPA 4: PRIMEIRO PASSO -->
+    <div style="margin-top:32px">
+      <div class="r-secao-header">
+        <span class="r-secao-tag">Etapa 04</span>
+        <span class="r-secao-titulo">Primeiro Passo RAIZ</span>
+      </div>
+      <div id="primeiro-passo-wrap"></div>
+    </div>
+
+    <!-- ETAPA 5: JORNADA RAIZ -->
+    <div style="margin-top:32px">
+      <div class="r-secao-header">
+        <span class="r-secao-tag">Etapa 05</span>
+        <span class="r-secao-titulo">Sua Jornada RAIZ</span>
+      </div>
+      <div id="jornada-wrap"></div>
+    </div>
+
+    <!-- ETAPA 6: LINHA DA EVOLUÇÃO -->
+    <div style="margin-top:32px">
+      <div class="r-secao-header">
+        <span class="r-secao-tag">Etapa 06</span>
+        <span class="r-secao-titulo">Continue acompanhando sua evolução</span>
+      </div>
+      <div class="evolucao-card">
+        <div class="ev-titulo">Linha da Evolução RAIZ</div>
+        <div class="ev-txt">O Mapa de Vazamentos foi criado para ser reaplicado ao longo do tempo. O diagnóstico de hoje representa uma fotografia do seu momento atual. Daqui a 60 dias, ao responder novamente, você terá uma comparação concreta entre dois momentos da sua trajetória. Essa comparação torna visível aquilo que muitas vezes passa despercebido no dia a dia: a evolução real que acontece quando ações consistentes são mantidas ao longo do tempo.<br><br>
+        <span style="font-size:10.5px;color:var(--r-verde-m);font-weight:500">Sugestão: marque na sua agenda uma nova aplicação em 60 dias a partir de hoje.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ETAPA 7: DECISÃO SUSTENTADA -->
+    <div style="margin-top:32px">
+      <div class="r-secao-header">
+        <span class="r-secao-tag">Etapa 07 · Assinatura RAIZ</span>
+        <span class="r-secao-titulo">Decisão Sustentada</span>
+      </div>
+      <div class="decisao-sustentada">
+        <div class="ds-label">Pergunta RAIZ</div>
+        <div class="ds-pergunta">"Qual decisão você escolhe sustentar a partir de hoje?"</div>
+        <textarea class="ds-textarea" id="decisao-input" placeholder="Escreva sua decisão aqui. Ela será salva junto com seu diagnóstico e apresentada na próxima vez que você responder este instrumento..."></textarea>
+        <div class="ds-nota">Esta resposta será guardada e apresentada a você na próxima aplicação, com a pergunta: "Você conseguiu sustentar essa decisão?" Esse é o ritual de responsabilidade do Método RAIZ.</div>
+      </div>
+    </div>
+
+    <!-- PLANO RAIZ -->
+    <div style="margin-top:24px">
+      <div class="plano-raiz">
+        <div class="plano-label">Plano RAIZ · 30 dias</div>
+        <div class="plano-pergunta">"Você gostaria de receber um Plano RAIZ personalizado com sugestões práticas para os próximos 30 dias?"</div>
+        <div class="plano-input-wrap">
+          <input type="text" class="r-input-light" id="plano-contato" placeholder="Seu e-mail ou WhatsApp" style="flex:1">
+          <button class="r-btn-primary" onclick="solicitarPlano()">Quero meu plano</button>
+        </div>
+        <div class="plano-confirmacao" id="plano-conf"></div>
+        <div class="plano-sub">Sem compromissos. Você receberá orientações personalizadas com base no seu diagnóstico.</div>
+      </div>
+    </div>
+
+    <!-- ENCERRAMENTO -->
+    <div style="margin-top:24px">
+      <div class="encerramento">
+        <div class="enc-titulo">O objetivo do Método RAIZ</div>
+        <div class="enc-txt">
+          "O objetivo do Método RAIZ não é medir perfeição.<br>
+          É tornar visível a sua evolução.<br><br>
+          Toda transformação começa por uma decisão.<br>
+          Mas ela só se torna realidade quando essa decisão<br>
+          é sustentada todos os dias."
+        </div>
+        <div class="enc-assin">Elisandra Mara Pereira · Método RAIZ · Conexão Essência</div>
+      </div>
+    </div>
+
+    <!-- PERGUNTA FINAL -->
+    <div class="r-citacao" style="margin-top:24px" id="pergunta-final-wrap"></div>
+
+    <!-- PDF -->
+    <div class="btn-pdf-wrap">
+      <button class="btn-pdf" id="btn-pdf" onclick="salvarPDF()">Salvar meu diagnóstico em PDF</button>
+    </div>
+    <div class="status-envio" id="status-envio"></div>
+
+    <div class="r-rodape">
+      <span>Método RAIZ · Conexão Essência · F01 v3.0 — Mapa de Vazamentos</span>
+      <span id="rodape-data"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT — ECOSSISTEMA RAIZ v1.0
+     ════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ─── CONFIGURAÇÃO RAIZ ──────────────────────────────────
+   Centraliza todas as configurações do ecossistema.
+   Reutilizável em F02, F03, F04...
+   ──────────────────────────────────────────────────────── */
+var RAIZ_CONFIG = {
+  versao_ferramenta: '3.0',
+  ferramenta_id: 'F01',
+  ferramenta_nome: 'Mapa de Vazamentos',
+  webhook_url: 'https://metodoraiz.app.n8n.cloud/webhook/a7c42932-8d89-4fb7-80d3-f387f14727e6', // substitua após configurar n8n
+  notion_db: '38ecd6197a71808a9a22eb7769b36791',
+  notion_token: ''
+};
+
+/* ─── ESTADO GLOBAL ──────────────────────────────────────
+   Padrão de dados reutilizável em todas as ferramentas.
+   ──────────────────────────────────────────────────────── */
+var RAIZ_STATE = {
+  registro_raiz: '',
+  nome: '',
+  email: '',
+  whatsapp: '',
+  origem: '',
+  data_aplicacao: new Date().toISOString().split('T')[0],
+  ferramenta: RAIZ_CONFIG.ferramenta_id,
+  versao: RAIZ_CONFIG.versao_ferramenta,
+  respostas: {},
+  scores: [],
+  igv: 0,
+  fase: '',
+  prioridade_raiz: '',
+  primeiro_passo: '',
+  decisao_sustentada: '',
+  plano_solicitado: false,
+  plano_contato: ''
+};
+
+var hojeData = new Date().toLocaleDateString('pt-BR');
+document.getElementById('rodape-data').textContent = hojeData;
+
+/* ─── DADOS METODOLÓGICOS F01 ────────────────────────────
+   Estrutura de dados padrão RAIZ.
+   ──────────────────────────────────────────────────────── */
+var DIMS = [
+  {
+    id:'V', nome:'Clareza Estratégica', pilar:'Direção',
+    desc:'O quanto você opera com direção consciente, sabendo para onde vai e por quê.',
+    afirmacoes:[
+      {id:'V001', txt:'Tenho clareza sobre quais são as três prioridades mais importantes do meu negócio neste momento.'},
+      {id:'V002', txt:'Consigo explicar com clareza onde quero chegar com meu negócio nos próximos 12 meses.'},
+      {id:'V003', txt:'Minha agenda semanal está organizada de acordo com minhas prioridades, e não apenas pelas urgências do dia.'},
+      {id:'V004', txt:'Tenho critérios claros que me ajudam a tomar decisões importantes no meu negócio.'},
+      {id:'V005', txt:'Reavalio minha direção estratégica pelo menos uma vez por mês para garantir que continuo no caminho certo.'}
+    ],
+    potencial:'Quando a clareza estratégica está consolidada, cada decisão, reunião e projeto passam a estar alinhados com um destino escolhido, e não apenas com aquilo que chega primeiro.',
+    fortalecimento:'O próximo passo é reservar um momento fixo na semana (20 minutos são suficientes) para revisar as prioridades e avaliar se a semana foi conduzida com intenção.',
+    primeiro_passo_24h:'Esta semana, escreva em uma folha ou documento: para onde você quer que seu negócio esteja em 12 meses. Escreva em linguagem simples, como se estivesse explicando para uma amiga. Esse exercício leva 20 minutos e muda a qualidade das suas próximas decisões.',
+    influencia_outras:'A clareza estratégica é a dimensão que orienta todas as outras. Sem direção definida, as decisões financeiras ficam instáveis, a energia se dispersa e a estrutura não sabe para onde crescer.',
+    jornada_texto:'Na Jornada RAIZ, a clareza estratégica é desenvolvida na etapa de Direção, onde você constrói os critérios que orientam suas decisões e organizam sua semana com intenção.'
+  },
+  {
+    id:'F', nome:'Sustentação Financeira', pilar:'Estrutura',
+    desc:'O grau de visibilidade que você tem sobre as finanças do negócio e o quanto utiliza essas informações para tomar decisões.',
+    afirmacoes:[
+      {id:'F001', txt:'Sei exatamente quanto meu negócio faturou e qual foi meu lucro no último mês.'},
+      {id:'F002', txt:'Sei qual é o faturamento mínimo necessário para manter meu negócio funcionando com segurança.'},
+      {id:'F003', txt:'Tenho um controle atualizado de todas as entradas e saídas financeiras do meu negócio.'},
+      {id:'F004', txt:'Tenho uma reserva financeira capaz de cobrir pelo menos um mês dos custos fixos do negócio.'},
+      {id:'F005', txt:'Utilizo meus dados financeiros para tomar decisões sobre investimentos, preços e crescimento.'}
+    ],
+    potencial:'Quando os números estão visíveis e atualizados, o financeiro deixa de ser uma fonte de ansiedade e passa a ser uma linguagem que orienta preços, investimentos e crescimento.',
+    fortalecimento:'O próximo passo é criar um ritual semanal de 30 minutos para olhar os números com calma, não para resolver, mas para compreender. A visibilidade começa com a regularidade desse olhar.',
+    primeiro_passo_24h:'Nas próximas 24 horas, separe 30 minutos para abrir o extrato do último mês e anotar apenas dois números: qual foi a receita real e qual foi o maior gasto. Esse simples exercício já começa a transformar sua relação com o financeiro.',
+    influencia_outras:'A sustentação financeira é o solo do negócio. Sem visibilidade financeira, as decisões estratégicas ficam no campo da intuição, a energia é consumida pela ansiedade e a expansão acontece sobre base frágil.',
+    jornada_texto:'Na Jornada RAIZ, a sustentação financeira é desenvolvida na etapa de Estrutura, onde você constrói visibilidade, ritmo e consciência sobre os números do negócio.'
+  },
+  {
+    id:'E', nome:'Gestão de Energia', pilar:'Identidade',
+    desc:'A capacidade de reconhecer, proteger e renovar sua energia como um recurso estratégico do negócio.',
+    afirmacoes:[
+      {id:'E001', txt:'Consigo identificar quais atividades do meu negócio aumentam minha energia e quais me desgastam.'},
+      {id:'E002', txt:'Minha rotina inclui momentos de pausa, recuperação e cuidado comigo, além das entregas e compromissos.'},
+      {id:'E003', txt:'Consigo finalizar meu dia de trabalho com a sensação de que avancei no que realmente importa.'},
+      {id:'E004', txt:'Percebo quando estou ultrapassando meus limites e sei quais ações preciso tomar para recuperar minha energia.'},
+      {id:'E005', txt:'Na maior parte do tempo, meu negócio contribui para minha energia e realização, em vez de apenas me consumir.'}
+    ],
+    potencial:'Quando a energia é tratada como um recurso estratégico, o negócio passa a ser sustentável de verdade: não apenas lucrativo no papel, mas viável na prática ao longo do tempo.',
+    fortalecimento:'O próximo passo é incluir na agenda semanal pelo menos um momento de recuperação intencional, não como recompensa, mas como parte da estratégia de condução do negócio.',
+    primeiro_passo_24h:'Nas próximas 24 horas, ao final do dia, anote em uma palavra como estava sua energia: alta, média ou baixa. Faça isso por 7 dias. Ao final, você terá um mapa real do seu ritmo, e esse mapa revela muito sobre como reorganizar sua semana.',
+    influencia_outras:'A energia é o combustível de todas as outras dimensões. Uma empresária que opera no limite toma decisões reativas, perde clareza estratégica e não consegue construir estrutura de forma consistente.',
+    jornada_texto:'Na Jornada RAIZ, a gestão de energia é trabalhada na etapa de Identidade, onde você aprende a reconhecer seus ritmos e a proteger sua capacidade de conduzir o negócio com consistência.'
+  },
+  {
+    id:'O', nome:'Estrutura Operacional', pilar:'Estrutura',
+    desc:'O grau de organização dos processos do negócio e o quanto ele depende ou não da sua presença constante.',
+    afirmacoes:[
+      {id:'O001', txt:'Meus principais processos estão organizados e registrados, não dependem apenas da minha memória.'},
+      {id:'O002', txt:'Tenho uma rotina semanal estruturada que equilibra atendimento, gestão e desenvolvimento do negócio.'},
+      {id:'O003', txt:'Consigo me ausentar por alguns dias sem comprometer o funcionamento das atividades essenciais.'},
+      {id:'O004', txt:'Consigo identificar rapidamente onde está um problema no negócio e quais ações preciso tomar para resolvê-lo.'},
+      {id:'O005', txt:'Reviso e aprimoro meus processos regularmente, antes que os problemas apareçam.'}
+    ],
+    potencial:'Quando a estrutura está consolidada, o negócio começa a ganhar vida própria e deixa de depender exclusivamente da sua memória ou presença para funcionar com consistência.',
+    fortalecimento:'O próximo passo é escolher um processo que você repete do zero toda semana e documentá-lo. Um processo por semana. Em dois meses, a estrutura do negócio pode mudar completamente.',
+    primeiro_passo_24h:'Nas próximas 48 horas, escolha o processo mais frequente do seu negócio (como o atendimento inicial a um cliente novo) e escreva como ele acontece, do primeiro contato até a entrega. Um processo documentado já é o início de uma estrutura real.',
+    influencia_outras:'A estrutura operacional é o que sustenta o crescimento. Sem processos organizados, cada nova conquista exige o mesmo esforço de construção do zero, consumindo energia que deveria ser usada para expandir.',
+    jornada_texto:'Na Jornada RAIZ, a estrutura operacional é desenvolvida na etapa de Estrutura, onde você constrói processos, rotinas e organização que funcionam além da sua presença.'
+  },
+  {
+    id:'D', nome:'Decisão Consciente', pilar:'Consciência',
+    desc:'A qualidade do seu processo decisório: se você decide com critérios claros ou por impulso, pressão e urgência.',
+    afirmacoes:[
+      {id:'D001', txt:'Consigo tomar decisões como cobrar, reajustar preços ou encerrar contratos com clareza e segurança.'},
+      {id:'D002', txt:'Tenho critérios definidos para escolher quais clientes, projetos e parcerias fazem sentido para o meu negócio.'},
+      {id:'D003', txt:'Consigo perceber se minhas decisões estão sendo guiadas por dados e estratégia ou apenas por medo, pressão ou emoção do momento.'},
+      {id:'D004', txt:'Analiso decisões importantes que tomei para aprender e evoluir, independentemente do resultado.'},
+      {id:'D005', txt:'Consigo tomar decisões difíceis sem permanecer presa por longos períodos na dúvida ou na insegurança.'}
+    ],
+    potencial:'Quando as decisões são tomadas com critérios claros e sem ansiedade, o negócio deixa de oscilar conforme o estado emocional do dia e começa a avançar com mais consistência.',
+    fortalecimento:'O próximo passo é criar dois critérios simples para dizer não: um critério financeiro e um critério de alinhamento. Ter esses critérios escritos transforma a qualidade de cada decisão.',
+    primeiro_passo_24h:'Nas próximas 24 horas, escreva a resposta para esta pergunta: em quais situações você costuma dizer sim quando queria dizer não? A resposta revela exatamente onde os critérios precisam ser construídos.',
+    influencia_outras:'A qualidade das decisões define o ritmo de todas as outras dimensões. Decisões tomadas por ansiedade comprometem a clareza estratégica, drenam energia e fragilizam a estrutura que foi construída.',
+    jornada_texto:'Na Jornada RAIZ, a decisão consciente é trabalhada na etapa de Consciência, onde você desenvolve a capacidade de reconhecer seus padrões e decidir a partir de critérios, não de reações.'
+  },
+  {
+    id:'X', nome:'Crescimento com Raiz', pilar:'Expansão',
+    desc:'A capacidade de crescer de forma sustentável, sem desmoronar o que foi construído a cada novo avanço.',
+    afirmacoes:[
+      {id:'X001', txt:'Minha estrutura atual consegue sustentar novos clientes e oportunidades sem comprometer a qualidade das minhas entregas.'},
+      {id:'X002', txt:'Tenho clareza sobre quais bases precisam estar fortalecidas antes do próximo passo de crescimento.'},
+      {id:'X003', txt:'Consigo manter meus resultados sem precisar reconstruir tudo novamente a cada novo avanço.'},
+      {id:'X004', txt:'Tenho espaço de tempo, energia e recursos para lidar com períodos de maior demanda sem entrar em sobrecarga.'},
+      {id:'X005', txt:'Meu crescimento nos últimos 12 meses aconteceu a partir de escolhas conscientes, e não apenas pelas circunstâncias.'}
+    ],
+    potencial:'Quando a expansão nasce de uma base sólida, cada conquista se transforma em uma plataforma para o próximo passo, e o crescimento deixa de ser um ciclo de picos e quedas para se tornar uma trajetória ascendente.',
+    fortalecimento:'O próximo passo é identificar o único pré-requisito que, se estivesse no lugar, tornaria seu próximo passo de crescimento mais seguro. Fortalecer esse ponto antes de avançar é uma das decisões mais estratégicas que você pode tomar agora.',
+    primeiro_passo_24h:'Nas próximas 48 horas, escreva a resposta para esta pergunta: o que precisaria estar funcionando bem no negócio para que você pudesse crescer sem sobrecarregar? A resposta revela onde concentrar sua energia nos próximos 30 dias.',
+    influencia_outras:'O crescimento com raiz é o resultado de todas as outras dimensões funcionando juntas. Quando a base está sólida, a expansão é consequência natural, não um esforço de risco.',
+    jornada_texto:'Na Jornada RAIZ, o crescimento com raiz é desenvolvido na etapa de Expansão, onde você aprende a crescer a partir de uma base sólida, com intenção e sem comprometer o que já foi construído.'
+  }
+];
+
+var ANCORA = ['Nunca','Raramente','Às vezes','Frequentemente','Sempre'];
+
+var NIVEIS = [
+  {max:25,  nome:'Início de Construção', cor:'#8B4E2E'},
+  {max:50,  nome:'Em Desenvolvimento',   cor:'#C9A96E'},
+  {max:75,  nome:'Consolidando',         cor:'#A8BC9E'},
+  {max:100, nome:'Consolidado',          cor:'#3D5C36'}
+];
+
+var FASES = [
+  {min:0,  max:25,  nome:'Raiz',         interp:function(n){return 'Seu diagnóstico atual está em '+n+' pontos. Este é um ponto de partida genuíno. Você está no momento de nomear os vazamentos antes de fechar qualquer um deles. A consciência que você está construindo agora é a base de tudo que virá.';}},
+  {min:26, max:45,  nome:'Ancoragem',    interp:function(n){return 'Seu diagnóstico atual está em '+n+' pontos. Você já possui consciência dos desafios. O próximo movimento é transformar esse conhecimento em estrutura real. Você está no momento de criar raízes antes de crescer.';}},
+  {min:46, max:62,  nome:'Estruturação', interp:function(n){return 'Seu diagnóstico está em '+n+' pontos. Você já consolidou aproximadamente '+n+'% da estrutura necessária para sustentar o momento atual do seu negócio. Os vazamentos que permanecem são pontos específicos, não uma crise generalizada.';}},
+  {min:63, max:78,  nome:'Consolidação', interp:function(n){return 'Seu diagnóstico está em '+n+' pontos. Sua base está sólida. Os próximos ganhos virão da consistência e do refinamento. Você está no momento de fortalecer aquilo que funciona antes de expandir.';}},
+  {min:79, max:100, nome:'Expansão',     interp:function(n){return 'Seu diagnóstico está em '+n+' pontos. Você construiu uma base robusta. Os vazamentos existentes são refinamentos, não crises. Você possui estrutura, clareza e energia para crescer com consistência e intenção.';}}
+];
+
+var PERGUNTAS_FINAIS = [
+  'Se você pudesse fortalecer apenas uma coisa no seu negócio nos próximos 30 dias, o que geraria a maior transformação?',
+  'Qual movimento, se realizado agora, tornaria os próximos 90 dias mais leves e mais rentáveis?',
+  'O que você já sabe que precisa mudar e ainda não começou? O que está esperando para começar?',
+  'Qual das suas dimensões, se fortalecida, teria maior impacto sobre as outras?',
+  'Se daqui a 90 dias você reaplicar este diagnóstico, qual resultado deseja alcançar?'
+];
+
+var INTERP_DIMS = {
+  V:['Neste momento, o negócio opera predominantemente no modo reativo. O próximo passo é criar uma direção escolhida, um destino claro para orientar as decisões do dia a dia.','Existe intuição sobre para onde ir, mas ainda falta consistência para transformar essa visão em ação estruturada. O trabalho agora é traduzir intenção em critérios.','A clareza existe e orienta as decisões na maior parte do tempo. O desafio é manter essa direção nas semanas de maior pressão e imprevistos.','Você opera com direção sólida. Decisões, agenda e prioridades conversam com a visão de futuro de forma consistente.'],
+  F:['As finanças do negócio ainda precisam de visibilidade. Criar o hábito de olhar para os números regularmente é o movimento que mais transforma neste momento.','Existe acompanhamento, mas ainda sem a sistematização necessária para usar os dados financeiros como ferramenta de decisão.','As finanças estão sendo acompanhadas com regularidade. O próximo passo é transformar esse controle em inteligência, usar os números para decidir com mais segurança.','Você tem visibilidade real e usa os dados financeiros para tomar decisões. O dinheiro é uma linguagem, não uma fonte de ansiedade.'],
+  E:['O negócio consome mais energia do que devolve neste momento. Antes de qualquer expansão, o movimento prioritário é criar espaço para recuperação intencional.','Existe entrega consistente, mas o ritmo ainda não é sustentável. A energia precisa ser tratada como recurso estratégico, não apenas como disposição que aparece ou some.','Existe alternância entre momentos de fluxo e sobrecarga. A gestão de energia está em construção, com avanços visíveis e espaço para aprofundamento.','Você opera em fluxo sustentável. O negócio nutre tanto quanto exige, e você sabe o que fazer quando o equilíbrio oscila.'],
+  O:['O negócio depende da sua presença e memória para funcionar. Documentar os processos essenciais é o movimento que mais libera energia e cria base para crescimento.','Existem alguns processos estruturados, mas a dependência ainda é alta. Cada processo documentado é um passo em direção a um negócio que funciona além de você.','A estrutura existe e funciona na maior parte do tempo. O próximo passo é reduzir os pontos de dependência que ainda restam e criar rotinas de melhoria contínua.','Seu negócio tem estrutura própria. Processos claros, rotinas estabelecidas e capacidade de operar com consistência independente da sua presença constante.'],
+  D:['As decisões são tomadas predominantemente por pressão ou urgência. Criar dois ou três critérios simples e usá-los transforma a qualidade de cada escolha que você faz.','Existe consciência dos próprios padrões decisórios, mas ainda há inconsistência. Algumas decisões são claras; outras ainda seguem a emoção do momento.','Na maioria das situações, você decide com critérios. Ainda há desconforto em situações de alta pressão, especialmente nas decisões financeiras e de limite.','Você decide com consistência, critério e agilidade. Aprende com as próprias decisões e tem um processo claro para as situações mais desafiadoras.'],
+  X:['O crescimento acontece em picos que ainda não se sustentam. O movimento agora é construir a base, não acelerar. Cada estrutura criada hoje é o alicerce do que vem depois.','Existe movimento de crescimento, mas sem consistência. Os resultados variam e o negócio ainda não tem a base necessária para sustentar um avanço maior.','A base está sendo construída. O crescimento tem mais consistência, mas ainda há vulnerabilidades em momentos de alta demanda ou imprevistos.','Você cresce e sustenta. Cada conquista vira plataforma para o próximo passo. O crescimento é intencional, planejado e absorvido sem colapso.']
+};
+
+/* ─── GERAÇÃO DO REGISTRO RAIZ ───────────────────────────
+   Identificador permanente da empresária no ecossistema.
+   Padrão: RR-AAAA-NNNNNN
+   ──────────────────────────────────────────────────────── */
+function gerarRegistroRAIZ() {
+  var ano = new Date().getFullYear();
+  var seq = String(Math.floor(Math.random() * 900000) + 100000);
+  return 'RR-' + ano + '-' + seq;
+}
+
+/* ─── NAVEGAÇÃO ──────────────────────────────────────────── */
+var dimAtual = 0;
+
+function irParaRegistro() {
+  document.getElementById('tela-bv').style.display = 'none';
+  document.getElementById('tela-registro').style.display = 'flex';
+  window.scrollTo(0,0);
+}
+
+var origemSelecionada = '';
+function selOrigem(btn, valor) {
+  document.querySelectorAll('.reg-origem-btn').forEach(function(b){ b.classList.remove('sel'); });
+  btn.classList.add('sel');
+  origemSelecionada = valor;
+}
+
+function criarRegistro() {
+  var nome = document.getElementById('reg-nome').value.trim();
+  var email = document.getElementById('reg-email').value.trim();
+  var wpp = document.getElementById('reg-whatsapp').value.trim();
+  var conf = document.getElementById('reg-confirmacao');
+
+  if (!nome || !email) {
+    conf.style.display = 'block';
+    conf.style.color = '#C4713F';
+    conf.innerHTML = 'Por favor, informe seu nome e e-mail para continuar.';
+    return;
+  }
+
+  RAIZ_STATE.nome = nome;
+  RAIZ_STATE.email = email;
+  RAIZ_STATE.whatsapp = wpp;
+  RAIZ_STATE.origem = origemSelecionada || 'Não informado';
+  RAIZ_STATE.registro_raiz = gerarRegistroRAIZ();
+
+  conf.style.display = 'block';
+  conf.style.color = 'var(--r-verde-l)';
+  conf.innerHTML = 'Seu Registro RAIZ foi criado. A partir de agora sua evolução poderá ser acompanhada ao longo do tempo.';
+
+  setTimeout(function() {
+    document.getElementById('tela-registro').style.display = 'none';
+    document.getElementById('tela-diag').style.display = 'block';
+    document.getElementById('dh-nome').textContent = RAIZ_STATE.nome;
+    renderDim(0);
+    window.scrollTo(0,0);
+  }, 1800);
+}
+
+/* ─── DIAGNÓSTICO ────────────────────────────────────────── */
+function renderDim(idx) {
+  dimAtual = idx;
+  var d = DIMS[idx];
+  var pct = Math.round((idx / 6) * 100);
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('dh-prog').textContent = 'Dimensão ' + (idx+1) + ' de 6';
+
+  var html = '<div class="dim-secao">';
+  html += '<div class="r-secao-header"><span class="r-secao-tag">Dimensão 0'+(idx+1)+' · '+d.pilar+'</span><span class="r-secao-titulo">'+d.nome+'</span></div>';
+  html += '<div class="dim-desc">'+d.desc+'</div>';
+  html += '<div class="afirm-lista">';
+  for (var i = 0; i < d.afirmacoes.length; i++) {
+    var a = d.afirmacoes[i];
+    html += '<div class="afirm-item">';
+    html += '<div class="afirm-id">'+a.id+'</div>';
+    html += '<div class="afirm-txt">"'+a.txt+'"</div>';
+    html += '<div class="escala-wrap" id="esc-'+a.id+'">';
+    for (var v = 0; v <= 4; v++) {
+      var sel = RAIZ_STATE.respostas[a.id] === v ? ' sel' : '';
+      html += '<div class="escala-op" onclick="selecionar(\''+a.id+'\','+v+')">';
+      html += '<button class="escala-btn'+sel+'" id="btn-'+a.id+'-'+v+'">'+v+'</button>';
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '<div class="escala-ancora"><span>'+ANCORA[0]+'</span><span>'+ANCORA[4]+'</span></div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<div style="margin-top:32px"><button class="r-btn-primary" onclick="avancarDim()">'+(idx < 5 ? 'Próxima dimensão →' : 'Ver meu diagnóstico →')+'</button></div>';
+  html += '</div>';
+
+  document.getElementById('dim-container').innerHTML = html;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function selecionar(id, val) {
+  RAIZ_STATE.respostas[id] = val;
+  for (var v = 0; v <= 4; v++) {
+    var btn = document.getElementById('btn-'+id+'-'+v);
+    if (btn) btn.className = 'escala-btn' + (v === val ? ' sel' : '');
+  }
+}
+
+function avancarDim() {
+  if (dimAtual < 5) { renderDim(dimAtual + 1); }
+  else { gerarResultado(); }
+}
+
+/* ─── CÁLCULO ────────────────────────────────────────────── */
+function calcScores() {
+  return DIMS.map(function(d) {
+    var soma = 0;
+    for (var i = 0; i < d.afirmacoes.length; i++) {
+      soma += ((RAIZ_STATE.respostas[d.afirmacoes[i].id] || 0) * 5);
+    }
+    return { id: d.id, nome: d.nome, score: soma };
+  });
+}
+
+function getIGV(scores) {
+  var total = 0;
+  for (var i = 0; i < scores.length; i++) total += scores[i].score;
+  return Math.round(total / scores.length);
+}
+
+function getFase(igv) {
+  for (var i = 0; i < FASES.length; i++) {
+    if (igv >= FASES[i].min && igv <= FASES[i].max) return FASES[i];
+  }
+  return FASES[FASES.length - 1];
+}
+
+function getNivel(score) {
+  for (var i = 0; i < NIVEIS.length; i++) {
+    if (score <= NIVEIS[i].max) return NIVEIS[i];
+  }
+  return NIVEIS[NIVEIS.length - 1];
+}
+
+function getInterp(dimId, score) {
+  var arr = INTERP_DIMS[dimId];
+  var idx = score <= 25 ? 0 : score <= 50 ? 1 : score <= 75 ? 2 : 3;
+  return arr ? arr[idx] : '';
+}
+
+function getMinScore(scores) {
+  var min = scores[0];
+  for (var i = 1; i < scores.length; i++) {
+    if (scores[i].score < min.score) min = scores[i];
+  }
+  return min;
+}
+
+/* ─── RESULTADO ──────────────────────────────────────────── */
+function gerarResultado() {
+  document.getElementById('prog-bar').style.width = '100%';
+
+  var scores = calcScores();
+  var igv = getIGV(scores);
+  var fase = getFase(igv);
+  var minS = getMinScore(scores);
+  var dimMin = DIMS.find(function(d){ return d.id === minS.id; });
+
+  // Salva no estado
+  RAIZ_STATE.scores = scores;
+  RAIZ_STATE.igv = igv;
+  RAIZ_STATE.fase = fase.nome;
+  RAIZ_STATE.prioridade_raiz = minS.nome;
+  RAIZ_STATE.primeiro_passo = dimMin.primeiro_passo_24h;
+
+  // Troca tela
+  document.getElementById('tela-diag').style.display = 'none';
+  document.getElementById('tela-resultado').style.display = 'block';
+
+  // Hero
+  document.getElementById('res-nome-data').textContent = RAIZ_STATE.nome + ' · ' + hojeData;
+  document.getElementById('igv-num').textContent = igv;
+  document.getElementById('igv-barra').style.width = igv + '%';
+  document.getElementById('fase-nome').textContent = fase.nome;
+  document.getElementById('igv-interp').textContent = fase.interp(igv);
+
+  // Acolhimento
+  var acolhTextos = {
+    'Raiz': 'Este é o início da sua Jornada RAIZ. Todo ponto de partida tem seu valor, e o maior deles é a coragem de olhar com honestidade para onde você está. Nenhuma dimensão aqui representa uma fraqueza — representa um ponto onde seu crescimento está esperando por você.',
+    'Ancoragem': 'Você está em um momento importante: já tem consciência do que precisa mudar, e isso é mais raro do que parece. A maioria das empresárias só descobre esses pontos quando a pressão já é grande. Você está à frente.',
+    'Estruturação': 'Seu diagnóstico revela uma empresária que já construiu bases importantes. Você não está começando do zero — está refinando. Os pontos de atenção que aparecem aqui são os ajustes que vão elevar o que você já construiu.',
+    'Consolidação': 'Você construiu uma base sólida. O que aparece neste diagnóstico são os pontos de refinamento que vão consolidar ainda mais o que funciona e preparar o terreno para o próximo nível de crescimento.',
+    'Expansão': 'Sua base está robusta. Você chegou a um momento onde o crescimento pode ser intencional e sustentável. O diagnóstico revela refinamentos, não crises. Você tem estrutura para avançar com consistência.'
+  };
+  document.getElementById('acolhimento-txt').innerHTML =
+    '<div style="font-family:var(--r-serif);font-size:16px;font-style:italic;color:var(--r-verde);line-height:1.7">' +
+    (acolhTextos[fase.nome] || acolhTextos['Estruturação']) + '</div>';
+
+  // Dimensões
+  var dimsHtml = '';
+  for (var i = 0; i < scores.length; i++) {
+    var s = scores[i];
+    var d = DIMS[i];
+    var nivel = getNivel(s.score);
+    var interp = getInterp(d.id, s.score);
+    dimsHtml += '<div class="dim-res-card">';
+    dimsHtml += '<div class="dim-res-top">';
+    dimsHtml += '<div class="dim-res-score" style="color:'+nivel.cor+'">'+s.score+'</div>';
+    dimsHtml += '<div class="dim-res-info">';
+    dimsHtml += '<div class="dim-res-nivel" style="color:'+nivel.cor+'">'+nivel.nome+'</div>';
+    dimsHtml += '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span style="font-family:var(--r-serif);font-size:16px;color:var(--r-verde);font-weight:600">'+s.nome+'</span></div>';
+    dimsHtml += '<div class="dim-res-barra"><div class="dim-res-barra-fill" style="width:'+s.score+'%;background:'+nivel.cor+'"></div></div>';
+    dimsHtml += '<div class="dim-res-interp">'+interp+'</div>';
+    dimsHtml += '</div></div>';
+    dimsHtml += '<div class="dim-res-blocos">';
+    dimsHtml += '<div class="dim-res-bloco"><div class="dim-bloco-label">Potencial</div><div class="dim-bloco-txt">'+d.potencial+'</div></div>';
+    dimsHtml += '<div class="dim-res-bloco"><div class="dim-bloco-label">Oportunidade de fortalecimento</div><div class="dim-bloco-txt">'+d.fortalecimento+'</div></div>';
+    dimsHtml += '</div></div>';
+  }
+  document.getElementById('dims-resultado').innerHTML = dimsHtml;
+
+  // Prioridade RAIZ
+  var prHtml = '<div class="prioridade-raiz">';
+  prHtml += '<div class="pr-header"><div class="pr-header-label">Identificada automaticamente com base no seu diagnóstico</div>';
+  prHtml += '<div class="pr-header-titulo">'+dimMin.nome+'</div></div>';
+  prHtml += '<div class="pr-corpo">';
+  prHtml += '<div style="font-size:12.5px;color:var(--r-tx-s);line-height:1.7;margin-bottom:14px">'+dimMin.influencia_outras+'</div>';
+  prHtml += '<div class="pr-blocos">';
+  prHtml += '<div class="pr-bloco"><div class="pr-bloco-label">O que este momento revela</div><div class="pr-bloco-txt">'+getInterp(dimMin.id, minS.score)+'</div></div>';
+  prHtml += '<div class="pr-bloco"><div class="pr-bloco-label">Prioridade dos próximos 30 dias</div><div class="pr-bloco-txt">'+dimMin.fortalecimento+'</div></div>';
+  prHtml += '</div>';
+  prHtml += '<div class="pr-acao"><strong style="font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--r-verde-m)">Ação prática desta semana</strong><br><span style="font-size:12px;line-height:1.65">'+dimMin.primeiro_passo_24h+'</span></div>';
+  prHtml += '<div class="pr-jornada">'+dimMin.jornada_texto+'</div>';
+  prHtml += '</div></div>';
+  document.getElementById('prioridade-raiz-wrap').innerHTML = prHtml;
+
+  // Primeiro Passo RAIZ
+  var ppHtml = '<div class="primeiro-passo">';
+  ppHtml += '<div class="pp-numero">24h</div>';
+  ppHtml += '<div class="pp-label">Primeiro Passo RAIZ</div>';
+  ppHtml += '<div class="pp-titulo">Uma ação para as próximas 24 a 48 horas</div>';
+  ppHtml += '<div class="pp-txt">'+dimMin.primeiro_passo_24h+'</div>';
+  ppHtml += '<span class="pp-prazo">Realize nas próximas 24–48 horas</span>';
+  ppHtml += '</div>';
+  document.getElementById('primeiro-passo-wrap').innerHTML = ppHtml;
+
+  // Jornada RAIZ
+  var jorHtml = '<div class="r-card" style="padding:20px 22px">';
+  jorHtml += '<div style="font-family:var(--r-serif);font-size:18px;color:var(--r-verde);margin-bottom:10px">Você está na etapa de <em style="color:var(--r-ouro)">'+fase.nome+'</em></div>';
+  jorHtml += '<div style="font-size:12.5px;color:var(--r-tx-s);line-height:1.7;margin-bottom:14px">'+fase.interp(igv)+'</div>';
+  jorHtml += '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
+  var etapas = ['Raiz','Ancoragem','Estruturação','Consolidação','Expansão'];
+  for (var e = 0; e < etapas.length; e++) {
+    var ativa = etapas[e] === fase.nome;
+    jorHtml += '<div style="padding:5px 14px;border-radius:1px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;'+(ativa?'background:var(--r-verde);color:var(--r-ouro);':'background:var(--r-areia-d);color:var(--r-tx-s);')+'">'+etapas[e]+'</div>';
+  }
+  jorHtml += '</div></div>';
+  document.getElementById('jornada-wrap').innerHTML = jorHtml;
+
+  // Pergunta final
+  var pfIdx = Math.min(Math.floor(minS.score / 20), PERGUNTAS_FINAIS.length - 1);
+  document.getElementById('pergunta-final-wrap').innerHTML =
+    '<div class="r-citacao-label">Pergunta para construção · Método RAIZ</div>' +
+    '<div class="r-citacao-txt">"'+PERGUNTAS_FINAIS[pfIdx]+'"</div>';
+
+  window.scrollTo(0, 0);
+}
+
+/* ─── PLANO RAIZ ─────────────────────────────────────────── */
+function solicitarPlano() {
+  var contato = document.getElementById('plano-contato').value.trim();
+  var conf = document.getElementById('plano-conf');
+  if (!contato) {
+    conf.style.display = 'block';
+    conf.innerHTML = 'Por favor, informe seu e-mail ou WhatsApp.';
+    conf.style.color = '#C4713F';
+    return;
+  }
+  RAIZ_STATE.plano_solicitado = true;
+  RAIZ_STATE.plano_contato = contato;
+
+  conf.style.display = 'block';
+  conf.innerHTML = 'Recebemos seu contato. Em breve você receberá seu Plano RAIZ personalizado com sugestões práticas para os próximos 30 dias.';
+  conf.style.color = 'var(--r-verde-l)';
+  document.getElementById('plano-contato').disabled = true;
+  document.querySelector('.plano-raiz .r-btn-primary').disabled = true;
+}
+
+/* ─── ENVIO DE DADOS ─────────────────────────────────────────
+   Função padrão reutilizável em todas as ferramentas RAIZ.
+   Envia via webhook n8n → Notion.
+   ──────────────────────────────────────────────────────────── */
+function enviarDadosRAIZ(payload) {
+  var url = RAIZ_CONFIG.webhook_url;
+  if (!url || url === 'COLE_AQUI_A_URL_DO_WEBHOOK_N8N') {
+    console.info('RAIZ: webhook não configurado. Dados prontos para envio:', payload);
+    return;
+  }
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(function() {
+    document.getElementById('status-envio').textContent = 'Diagnóstico registrado na Base de Evidências RAIZ.';
+  }).catch(function(e) {
+    console.warn('RAIZ: falha no envio', e);
+  });
+}
+
+function construirPayloadRAIZ() {
+  var decisao = document.getElementById('decisao-input') ? document.getElementById('decisao-input').value.trim() : '';
+  RAIZ_STATE.decisao_sustentada = decisao;
+
+  var scoresObj = {};
+  for (var i = 0; i < RAIZ_STATE.scores.length; i++) {
+    scoresObj[RAIZ_STATE.scores[i].id] = RAIZ_STATE.scores[i].score;
+  }
+
+  return {
+    // Identificação
+    registro_raiz: RAIZ_STATE.registro_raiz,
+    nome: RAIZ_STATE.nome,
+    email: RAIZ_STATE.email,
+    whatsapp: RAIZ_STATE.whatsapp,
+    origem: RAIZ_STATE.origem,
+    // Metadados
+    data_aplicacao: RAIZ_STATE.data_aplicacao,
+    ferramenta: RAIZ_STATE.ferramenta,
+    versao: RAIZ_STATE.versao,
+    // Resultados
+    igv: RAIZ_STATE.igv,
+    fase: RAIZ_STATE.fase,
+    scores: scoresObj,
+    // Análise RAIZ
+    prioridade_raiz: RAIZ_STATE.prioridade_raiz,
+    primeiro_passo: RAIZ_STATE.primeiro_passo,
+    decisao_sustentada: decisao,
+    // Plano
+    plano_solicitado: RAIZ_STATE.plano_solicitado,
+    plano_contato: RAIZ_STATE.plano_contato,
+    // Todas as respostas individuais (para análise longitudinal)
+    respostas: RAIZ_STATE.respostas
+  };
+}
+
+/* ─── PDF ────────────────────────────────────────────────── */
+function salvarPDF() {
+  var btn = document.getElementById('btn-pdf');
+  btn.textContent = 'Gerando...';
+  btn.disabled = true;
+
+  var scores = RAIZ_STATE.scores.length ? RAIZ_STATE.scores : calcScores();
+  var igv = RAIZ_STATE.igv || getIGV(scores);
+  var fase = getFase(igv);
+  var minS = getMinScore(scores);
+  var dimMin = DIMS.find(function(d){ return d.id === minS.id; });
+  var decisao = document.getElementById('decisao-input') ? document.getElementById('decisao-input').value.trim() : '';
+
+  var dimsHtml = '';
+  for (var i = 0; i < scores.length; i++) {
+    var s = scores[i];
+    var nivel = getNivel(s.score);
+    var d = DIMS[i];
+    dimsHtml += '<div style="margin-bottom:16px">';
+    dimsHtml += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">';
+    dimsHtml += '<span style="font-size:11pt;font-weight:500;color:#2F3D2E">'+s.nome+'</span>';
+    dimsHtml += '<span style="font-family:Georgia,serif;font-size:18pt;font-weight:300;color:'+nivel.cor+'">'+s.score+'</span>';
+    dimsHtml += '</div>';
+    dimsHtml += '<div style="height:4px;background:#E8E4DC;border-radius:2px;overflow:hidden;margin-bottom:5px">';
+    dimsHtml += '<div style="height:4px;width:'+s.score+'%;background:'+nivel.cor+';border-radius:2px"></div></div>';
+    dimsHtml += '<div style="font-size:8.5pt;color:#5A5A52;font-style:italic;line-height:1.5">'+nivel.nome+' · '+getInterp(d.id,s.score).substring(0,100)+'...</div>';
+    dimsHtml += '</div>';
+  }
+
+  var sorted = scores.slice().sort(function(a,b){ return a.score-b.score; }).slice(0,3);
+  var priorsHtml = '';
+  for (var j = 0; j < sorted.length; j++) {
+    var ps = sorted[j];
+    var pd = DIMS.find(function(d){ return d.id === ps.id; });
+    priorsHtml += '<div style="padding:10px 16px;border-bottom:1px solid #E8E4DC">';
+    priorsHtml += '<div style="font-size:7.5pt;letter-spacing:.1em;text-transform:uppercase;color:#8A8A82;font-family:Arial;margin-bottom:3px">0'+(j+1)+' · '+ps.nome+' ('+ps.score+'/100)</div>';
+    priorsHtml += '<div style="font-size:10pt;color:#2F3D2E;line-height:1.55">'+pd.fortalecimento+'</div>';
+    priorsHtml += '</div>';
+  }
+
+  var h = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">';
+  h += '<title>Mapa de Vazamentos - '+RAIZ_STATE.nome+' - '+hojeData+'</title>';
+  h += '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Georgia,serif;color:#1A1A18;font-size:11pt;line-height:1.6;background:#F3F1EC}@page{margin:14mm}@media print{body{background:#fff}}</style>';
+  h += '</head><body>';
+  h += '<div style="background:#2F3D2E;padding:30px 34px;margin-bottom:22px">';
+  h += '<div style="font-size:7pt;letter-spacing:.22em;text-transform:uppercase;color:#A8BC9E;font-family:Arial;margin-bottom:8px">FERRAMENTA 01 · VERSAO 3.0 · METODO RAIZ · CONEXAO ESSENCIA</div>';
+  h += '<div style="font-size:26pt;font-weight:300;color:#F3F1EC;line-height:1.05;margin-bottom:6px">Mapa de <span style="font-style:italic;color:#C9A96E">Vazamentos</span></div>';
+  h += '<div style="font-size:10pt;font-style:italic;color:rgba(243,241,236,.65)">'+RAIZ_STATE.nome+' · '+hojeData+'</div>';
+  h += '<div style="margin-top:6px;font-size:7pt;color:rgba(168,188,154,.45);font-family:Arial">Registro RAIZ: [confidencial] · '+RAIZ_STATE.email+'</div>';
+  h += '</div>';
+  h += '<div style="background:#fff;border:1px solid #D9D5CC;padding:20px 28px;margin-bottom:14px">';
+  h += '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:18px">';
+  h += '<div style="text-align:center;min-width:80px;border:1px solid #D9D5CC;padding:12px;border-radius:2px">';
+  h += '<div style="font-size:32pt;font-weight:300;color:#2F3D2E;font-family:Georgia;line-height:1">'+igv+'</div>';
+  h += '<div style="font-size:7pt;text-transform:uppercase;letter-spacing:.08em;color:#8A8A82;font-family:Arial;margin-top:3px">IGV /100</div>';
+  h += '</div>';
+  h += '<div style="flex:1"><div style="font-size:7pt;letter-spacing:.14em;text-transform:uppercase;color:#C9A96E;font-family:Arial;margin-bottom:4px">JORNADA RAIZ</div>';
+  h += '<div style="font-size:17pt;font-family:Georgia;color:#2F3D2E;margin-bottom:6px">'+fase.nome+'</div>';
+  h += '<div style="font-size:10pt;color:#5A5A52;font-style:italic;line-height:1.6">'+fase.interp(igv)+'</div></div>';
+  h += '</div>';
+  h += '<div style="font-size:7pt;letter-spacing:.16em;text-transform:uppercase;color:#8A8A82;font-family:Arial;margin-bottom:12px">DIAGNOSTICO POR DIMENSAO</div>';
+  h += dimsHtml;
+  h += '</div>';
+  h += '<div style="background:#2F3D2E;padding:14px 20px;margin-bottom:0"><div style="font-size:7pt;letter-spacing:.16em;text-transform:uppercase;color:#A8BC9E;font-family:Arial;margin-bottom:3px">PRIORIDADE RAIZ · FOCO 30 DIAS</div>';
+  h += '<div style="font-size:14pt;color:#F3F1EC;font-family:Georgia;margin-bottom:2px">'+dimMin.nome+'</div>';
+  h += '<div style="font-size:9pt;color:rgba(243,241,236,.6);font-style:italic">'+dimMin.influencia_outras.substring(0,120)+'...</div></div>';
+  h += '<div style="background:#fff;border:1px solid #D9D5CC;border-top:none;margin-bottom:14px">'+priorsHtml+'</div>';
+  if (decisao) {
+    h += '<div style="background:#2F3D2E;padding:18px 22px;margin-bottom:14px">';
+    h += '<div style="font-size:7pt;letter-spacing:.18em;text-transform:uppercase;color:#A8BC9E;font-family:Arial;margin-bottom:8px">DECISAO SUSTENTADA · ASSINATURA RAIZ</div>';
+    h += '<div style="font-size:11pt;font-style:italic;color:#F3F1EC;line-height:1.65">"'+decisao+'"</div>';
+    h += '<div style="margin-top:8px;font-size:8pt;color:rgba(168,188,154,.5);font-family:Arial">Esta decisao sera apresentada na sua proxima aplicacao do Mapa de Vazamentos.</div>';
+    h += '</div>';
+  }
+  h += '<div style="background:#2F3D2E;padding:16px 20px;margin-bottom:14px">';
+  h += '<div style="font-size:7pt;letter-spacing:.18em;text-transform:uppercase;color:#A8BC9E;font-family:Arial;margin-bottom:8px">OBJETIVO DO METODO RAIZ</div>';
+  h += '<div style="font-size:11pt;font-style:italic;color:#F3F1EC;line-height:1.65">"O objetivo do Metodo RAIZ nao e medir perfeicao. E tornar visivel a sua evolucao. Toda transformacao comeca por uma decisao. Mas ela so se torna realidade quando essa decisao e sustentada todos os dias."</div>';
+  h += '</div>';
+  h += '<div style="padding-top:8px;border-top:1px solid #D9D5CC;display:flex;justify-content:space-between;font-size:7.5pt;color:#AAAAAA;font-family:Arial">';
+  h += '<span>Metodo RAIZ · Conexao Essencia · F01 v3.0</span><span>'+hojeData+'</span>';
+  h += '</div></body></html>';
+
+  var blob = new Blob([h], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = 'RAIZ-Mapa-Vazamentos-'+RAIZ_STATE.nome.replace(/\s+/g,'-')+'-'+hojeData.replace(/\//g,'-')+'.html';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+
+  // Envia dados completos
+  var payload = construirPayloadRAIZ();
+  enviarDadosRAIZ(payload);
+
+  btn.textContent = 'Salvar meu diagnóstico em PDF';
+  btn.disabled = false;
+}
+
+// Compatibilidade com Array.prototype.find em navegadores antigos
+if (!Array.prototype.find) {
+  Array.prototype.find = function(cb) {
+    for (var i = 0; i < this.length; i++) { if (cb(this[i])) return this[i]; }
+    return undefined;
+  };
+}
+</script>
+</body>
+</html>
